@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 
 // Type definitions
@@ -8,6 +8,64 @@ function App() {
   const [activeTab, setActiveTab] = useState<TabType>('Home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [carouselIndices, setCarouselIndices] = useState<number[]>([0, 0, 0]);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [showCertsModal, setShowCertsModal] = useState(false);
+  const [activeCertIndex, setActiveCertIndex] = useState(0);
+
+  const certificates = [
+    {
+      image: '/cert_1.jpg',
+      title: '3rd Place Winner — PsychoVoice (Dekan Cup UNJ 2023)'
+    },
+    {
+      image: '/cert_2.png',
+      title: 'Staff of Equipment Division — UNJ Psychology Inauguration 2022'
+    },
+    {
+      image: '/cert_3.jpg',
+      title: '3rd Place Winner — UI/UX Web Design Competition (FMIPA UNJ 2023)'
+    },
+    {
+      image: '/cert_4.jpg',
+      title: 'Committee Member — ADHD Early Detection Psychoeducation (UNJ 2025)'
+    },
+    {
+      image: '/cert_5.jpg',
+      title: 'Committee Member — ADHD Teacher Knowledge Optimization (UNJ 2025)'
+    }
+  ];
+
+  useEffect(() => {
+    if (!showCertsModal) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowCertsModal(false);
+      } else if (e.key === 'ArrowRight') {
+        setActiveCertIndex((prev) => (prev === certificates.length - 1 ? 0 : prev + 1));
+      } else if (e.key === 'ArrowLeft') {
+        setActiveCertIndex((prev) => (prev === 0 ? certificates.length - 1 : prev - 1));
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showCertsModal, certificates.length]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCarouselIndices((prev) => prev.map((idx) => (idx + 1) % 3));
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      return next;
+    });
+  };
 
   const handleNext = (cardIdx: number) => {
     setCarouselIndices((prev) => {
@@ -27,26 +85,26 @@ function App() {
 
   const expImages = [
     [
-      { src: '/hr_training.png', alt: 'Training & Development' },
-      { src: '/hr_interview.png', alt: 'Talent Acquisition' },
-      { src: '/hr_branding.png', alt: 'Employer Branding Content' }
+      { src: '/kemnaker_intern_1.jpg?v=1', alt: 'MNC Media Kemnaker Intern Team' },
+      { src: '/kemnaker_intern_2.jpg?v=1', alt: 'iNews Media Group Office Team' },
+      { src: '/kemnaker_intern_3.jpg?v=1', alt: 'Kemnaker Intern Meeting Group' }
     ],
     [
-      { src: '/hr_interview.png', alt: 'Recruitment & Screening' },
-      { src: '/hr_branding.png', alt: 'Employee Engagement' },
-      { src: '/hr_training.png', alt: 'Internal Communication' }
+      { src: '/suitmedia_freelance_1.jpg?v=1', alt: 'Suitmedia Freelance Team Outing' },
+      { src: '/suitmedia_freelance_2.jpg?v=1', alt: 'Suitmedia Freelance Dinner & Group' },
+      { src: '/suitmedia_freelance_3.jpg?v=1', alt: 'Suitmedia Office Front Group' }
     ],
     [
-      { src: '/hr_branding.png', alt: 'Company Branding Socials' },
-      { src: '/hr_training.png', alt: 'Departmental Meetings' },
-      { src: '/hr_interview.png', alt: 'Employee Onboarding' }
+      { src: '/suitmedia_intern_1.jpg?v=1', alt: 'Suitmedia MSIB Intern Team' },
+      { src: '/suitmedia_intern_2.jpg?v=1', alt: 'Suitmedia Birthday Celebration' },
+      { src: '/suitmedia_intern_3.jpg?v=1', alt: 'Suitmedia HR MSIB Group' }
     ]
   ];
 
   // Interactive profile data
   const profile = {
     name: 'Susana Bureni',
-    role: 'HR & Employer Branding Specialist',
+    role: 'Psychology Graduate | HR & Employer Branding',
     location: 'Cengkareng, Jakarta Barat',
     email: 'susanna.bureni@gmail.com',
     phone: '089602646150',
@@ -128,26 +186,35 @@ function App() {
               </div>
 
               <div className="home-hero-image-wrap">
-                <img src="/susana.png" alt="Susana Bureni" className="home-hero-img" />
+                <img src="/susana.png?v=2" alt="Susana Bureni" className="home-hero-img" />
               </div>
             </div>
 
-            <h3 className="section-header">Statistik & Pencapaian Utama</h3>
+            <h3 className="section-header">Key Statistics & Achievements</h3>
             <div className="stats-grid">
               <div className="stat-card">
-                <div className="stat-value">24+</div>
-                <div className="stat-label">Training Sessions</div>
-                <div className="stat-desc">Diikuti oleh 400+ peserta dengan tingkat kepuasan 3.5/4.0 di iNews Media Group.</div>
+                <div className="stat-header-horizontal">
+                  <div className="stat-value-large">24+</div>
+                  <div className="stat-label-single-line">Training Sessions</div>
+                </div>
+                <div className="stat-desc">Attended by 400+ participants with a 3.5/4.0 satisfaction score at iNews Media Group.</div>
               </div>
               <div className="stat-card">
-                <div className="stat-value">20k+</div>
-                <div className="stat-label">Employer Branding Views</div>
-                <div className="stat-desc">Menjangkau 7k+ akun dengan capture 67.4% non-follower views dalam 90 hari.</div>
+                <div className="stat-header-horizontal">
+                  <div className="stat-value-large">20K+</div>
+                  <div className="stat-label-stack">
+                    <div className="stat-label-line-text">Employer</div>
+                    <div className="stat-label-line-text">Branding Views</div>
+                  </div>
+                </div>
+                <div className="stat-desc">Reached 7k+ accounts with 67.4% non-follower views captured in 90 days.</div>
               </div>
               <div className="stat-card">
-                <div className="stat-value">500+</div>
-                <div className="stat-label">CV Screened</div>
-                <div className="stat-desc">Menyeleksi berkas pendaftaran dan merekrut 12 anak magang untuk 5 divisi di Suitmedia.</div>
+                <div className="stat-header-horizontal">
+                  <div className="stat-value-large">500+</div>
+                  <div className="stat-label-single-line">CVs Screened</div>
+                </div>
+                <div className="stat-desc">Screened application profiles and recruited 12 interns for 5 divisions at Suitmedia.</div>
               </div>
             </div>
           </div>
@@ -157,10 +224,10 @@ function App() {
         return (
           <div key="experience">
             <div className="content-title-section">
-              <h2 className="content-title">Pengalaman Kerja</h2>
+              <h2 className="content-title">Work Experience</h2>
             </div>
             <p className="content-subtitle">
-              Berikut adalah perjalanan karier saya di bidang <span className="highlight">Human Resources (HR)</span> dan <span className="highlight">Branding</span> korporat.
+              A look into my professional journey, bridging the gap between a <span className="highlight">strong focus on people in Human Resources</span> and <span className="highlight">creative Employer Branding</span>.
             </p>
 
             <div className="timeline">
@@ -195,11 +262,6 @@ function App() {
                         })}
                       </div>
                       <div className="exp-carousel-controls">
-                        <button className="carousel-arrow prev" onClick={() => handlePrev(0)}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <polyline points="15 18 9 12 15 6" />
-                          </svg>
-                        </button>
                         <div className="carousel-dots">
                           {[0, 1, 2].map((dot) => (
                             <span 
@@ -215,11 +277,6 @@ function App() {
                             />
                           ))}
                         </div>
-                        <button className="carousel-arrow next" onClick={() => handleNext(0)}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <polyline points="9 18 15 12 9 6" />
-                          </svg>
-                        </button>
                       </div>
                     </div>
 
@@ -227,44 +284,35 @@ function App() {
                     <div className="experience-card-info">
                       <div className="experience-header">
                         <div className="experience-title-area">
-                          <h3>HR Intern (Program MagangHub Kemnaker)</h3>
+                          <h3>HR Intern (MagangHub Kemnaker Program)</h3>
                           <div className="experience-company">MNC Television Network (iNews Media Group) — Jakarta</div>
                         </div>
-                        <span className="experience-date">Nov 2025 – Mei 2026</span>
+                        <span className="experience-date">Nov 2025 – May 2026</span>
                       </div>
-                      <p className="experience-company-desc">
-                        iNews Media Group merupakan bagian dari MNC Media, grup media terintegrasi terbesar di Asia Tenggara yang menjangkau platform televisi, digital, cetak, dan radio di Indonesia.
-                      </p>
+                      <div className="experience-company-desc">
+                        <p>
+                          As a fresh graduate, passing the highly competitive MagangHub Kemnaker national selection was an incredible stepping stone. Out of over 180,000 applicants nationwide, I was chosen as one of the 62,754 talents and eventually completed my tenure with an 'Excellent' predicate. At iNews Media Group, my role went far beyond conventional HR administrative tasks. I was challenged to bring a fresh perspective by integrating HR management with a creative visual approach, from overseeing employee development to building the company's digital presence.
+                        </p>
+                        <p>
+                          During my 6-month tenure, here are the key areas where I made a tangible impact:
+                        </p>
+                      </div>
                       
-                      <div className="experience-details">
-                        <div className="experience-detail-item">
-                          <span className="experience-detail-title">Learning & Development</span>
+                      <ul className="experience-details">
+                        <li className="experience-detail-item">
+                          <strong className="experience-detail-title">Learning & Training Development</strong>
                           <p className="experience-detail-desc">
-                            Mengelola dan mengarahkan 24 pelatihan (end-to-end training sessions) untuk 400+ peserta dengan skor kepuasan 3.5/4.0, serta merumuskan laporan evaluasi mingguan divisi.
+                            Contributed to the execution of dozens of training sessions for hundreds of employees with highly satisfactory feedback. I also revamped the new hire onboarding experience to be more modern by creating interactive modules and comprehensive handbooks.
                           </p>
-                        </div>
+                        </li>
 
-                        <div className="experience-detail-item">
-                          <span className="experience-detail-title">Onboarding & Employee Experience</span>
+                        <li className="experience-detail-item">
+                          <strong className="experience-detail-title">Creative Employer Branding</strong>
                           <p className="experience-detail-desc">
-                            Merampingkan proses onboarding dengan membuat modul pembelajaran interaktif menggunakan Canva dan menulis 2 panduan utama: <i>New Joiner Employee Handbook</i> & <i>HR Intern Handbook</i>.
+                            Acted as the driving force behind the company's social media content strategy, specifically for the Human Resources department. This ranged from refreshing the visual identity to producing dozens of content pieces that successfully expanded our reach to thousands of new organic audiences.
                           </p>
-                        </div>
-
-                        <div className="experience-detail-item">
-                          <span className="experience-detail-title">Employer Branding</span>
-                          <p className="experience-detail-desc">
-                            Menyusun strategi konten branding korporat selama 6 bulan (50 post) dan mendesain ulang logo profil resmi perusahaan. Menghasilkan 20,286 views serta jangkauan ke 7,072 akun unik (67.4% non-follower reach).
-                          </p>
-                        </div>
-
-                        <div className="experience-detail-item">
-                          <span className="experience-detail-title">Talent Acquisition & HR Operations</span>
-                          <p className="experience-detail-desc">
-                            Melakukan seleksi resume (screening), wawancara awal, dan mengoordinasikan jadwal interview pelamar. Menjaga integritas data 100% dengan mengaudit database absensi bulanan dan mengelola arsip digital anak magang.
-                          </p>
-                        </div>
-                      </div>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -301,11 +349,6 @@ function App() {
                         })}
                       </div>
                       <div className="exp-carousel-controls">
-                        <button className="carousel-arrow prev" onClick={() => handlePrev(1)}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <polyline points="15 18 9 12 15 6" />
-                          </svg>
-                        </button>
                         <div className="carousel-dots">
                           {[0, 1, 2].map((dot) => (
                             <span 
@@ -321,11 +364,6 @@ function App() {
                             />
                           ))}
                         </div>
-                        <button className="carousel-arrow next" onClick={() => handleNext(1)}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <polyline points="9 18 15 12 9 6" />
-                          </svg>
-                        </button>
                       </div>
                     </div>
 
@@ -336,27 +374,39 @@ function App() {
                           <h3>Jr. HR Freelance</h3>
                           <div className="experience-company">Suitmedia — Jakarta</div>
                         </div>
-                        <span className="experience-date">Jul 2024 – Okt 2024</span>
+                        <span className="experience-date">Jul 2024 – Oct 2024</span>
                       </div>
-                      <p className="experience-company-desc">
-                        Suitmedia adalah agensi digital full-service yang berfokus pada solusi teknologi dan pemasaran terintegrasi (digital marketing & app/web development).
-                      </p>
+                      <div className="experience-company-desc">
+                        <p>
+                          Being entrusted once again by Suitmedia after my internship ended gave me the room to take on more independent responsibilities. In this freelance role, my focus centered on managing the internship recruitment cycle, handling internal initiatives, and strengthening communication bridges within the digital agency environment. This experience sharpened my ability to manage HR operations more tactically and structurally.
+                        </p>
+                        <p>
+                          Here are my main areas of contribution:
+                        </p>
+                      </div>
                       
-                      <div className="experience-details">
-                        <div className="experience-detail-item">
-                          <span className="experience-detail-title">Recruitment</span>
+                      <ul className="experience-details">
+                        <li className="experience-detail-item">
+                          <strong className="experience-detail-title">Internship Recruitment</strong>
                           <p className="experience-detail-desc">
-                            Mengelola rekrutmen anak magang dari hulu ke hilir: menyeleksi lebih dari 500 CV, menyaring kandidat, hingga meloloskan 12 anak magang untuk 5 posisi berbeda, serta mengurus draf kontrak kerja.
+                            Managed the entire internship recruitment process end-to-end. These responsibilities included screening hundreds of incoming CVs, selecting potential candidates for various positions, and handling the drafting and coordination of their employment contracts.
                           </p>
-                        </div>
+                        </li>
 
-                        <div className="experience-detail-item">
-                          <span className="experience-detail-title">Employee Engagement & Internal Communication</span>
+                        <li className="experience-detail-item">
+                          <strong className="experience-detail-title">Employee Engagement</strong>
                           <p className="experience-detail-desc">
-                            Menyelenggarakan kegiatan kebersamaan karyawan (engagement activities), mengelola anggaran, menyusun laporan berbasis KPI, serta mengoordinasikan pertemuan bulanan antar departemen.
+                            Designed and executed various employee engagement programs to maintain work motivation, efficiently managed event budget allocations, and compiled in-depth evaluation reports that met the company's KPI standards.
                           </p>
-                        </div>
-                      </div>
+                        </li>
+
+                        <li className="experience-detail-item">
+                          <strong className="experience-detail-title">Internal Communication</strong>
+                          <p className="experience-detail-desc">
+                            Scheduled and coordinated regular monthly meetings for each department to minimize communication barriers and improve cross-functional synergy within the company.
+                          </p>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -393,11 +443,6 @@ function App() {
                         })}
                       </div>
                       <div className="exp-carousel-controls">
-                        <button className="carousel-arrow prev" onClick={() => handlePrev(2)}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <polyline points="15 18 9 12 15 6" />
-                          </svg>
-                        </button>
                         <div className="carousel-dots">
                           {[0, 1, 2].map((dot) => (
                             <span 
@@ -413,11 +458,6 @@ function App() {
                             />
                           ))}
                         </div>
-                        <button className="carousel-arrow next" onClick={() => handleNext(2)}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <polyline points="9 18 15 12 9 6" />
-                          </svg>
-                        </button>
                       </div>
                     </div>
 
@@ -425,30 +465,42 @@ function App() {
                     <div className="experience-card-info">
                       <div className="experience-header">
                         <div className="experience-title-area">
-                          <h3>HR Intern (Program MSIB)</h3>
+                          <h3>HR Intern (MSIB Program)</h3>
                           <div className="experience-company">Suitmedia — Jakarta</div>
                         </div>
                         <span className="experience-date">Feb 2024 – Jun 2024</span>
                       </div>
-                      <p className="experience-company-desc">
-                        Program Magang & Studi Independen Bersertifikat (MSIB) Kampus Merdeka di agensi digital Suitmedia.
-                      </p>
-                      
-                      <div className="experience-details">
-                        <div className="experience-detail-item">
-                          <span className="experience-detail-title">Employee Engagement & Communication</span>
-                          <p className="experience-detail-desc">
-                            Mengorganisasi aktivitas kebersamaan, menyusun anggaran pengeluaran, mendokumentasikan kegiatan dalam laporan KPI, serta menjadwalkan rapat rutin tiap departemen.
-                          </p>
-                        </div>
-
-                        <div className="experience-detail-item">
-                          <span className="experience-detail-title">Company Branding</span>
-                          <p className="experience-detail-desc">
-                            Mendukung branding media sosial agensi dengan mengkurasi ide konten kreatif, membuat draf takarir (caption), dan menjadwalkan publikasi konten.
-                          </p>
-                        </div>
+                      <div className="experience-company-desc">
+                        <p>
+                          Being part of the Kampus Merdeka MSIB Batch 6 program at Suitmedia was an extraordinary competitive achievement. Out of more than 150,000 university students applying from all over Indonesia, only 47,984 passed the national selection, and I successfully became one of them. This valuable experience served as my initial foundation in exploring the HR world practically, specifically in balancing operational stability and creativity within the digital agency industry.
+                        </p>
+                        <p>
+                          Some of the tangible contributions I made during this program include:
+                        </p>
                       </div>
+                      
+                      <ul className="experience-details">
+                        <li className="experience-detail-item">
+                          <strong className="experience-detail-title">Operational & Engagement Support</strong>
+                          <p className="experience-detail-desc">
+                            Actively contributed to maintaining a positive work environment through the execution of employee engagement activities, regular budget management, and the preparation of accurate event evaluation reports.
+                          </p>
+                        </li>
+
+                        <li className="experience-detail-item">
+                          <strong className="experience-detail-title">Content Documentation & Asset Management</strong>
+                          <p className="experience-detail-desc">
+                            Supported the company's social media branding strategy by acting as the primary asset provider. I took full responsibility for documenting company events, curating the best photos, and summarizing activities into ready-to-use materials for the creative team.
+                          </p>
+                        </li>
+
+                        <li className="experience-detail-item">
+                          <strong className="experience-detail-title">Cross-Functional Communication</strong>
+                          <p className="experience-detail-desc">
+                            Facilitated the smooth flow of internal information by organizing schedules and agendas for regular cross-departmental meetings.
+                          </p>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -461,10 +513,10 @@ function App() {
         return (
           <div key="social-activity">
             <div className="content-title-section">
-              <h2 className="content-title">Aktivitas Organisasi</h2>
+              <h2 className="content-title">Organizational Activities</h2>
             </div>
             <p className="content-subtitle">
-              Keterlibatan aktif saya dalam <span className="highlight">organisasi sosial, komunitas, dan kepanitiaan</span> kampus.
+              A showcase of my <span className="highlight">community involvement</span>, featuring the <span className="highlight">creative assets</span> and <span className="highlight">visual designs</span> I produced for each event.
             </p>
 
             <div className="timeline">
@@ -474,13 +526,13 @@ function App() {
                 <div className="experience-card">
                   <div className="experience-header">
                     <div className="experience-title-area">
-                      <h3>Sekretaris (Secretary)</h3>
+                      <h3>Secretary</h3>
                       <div className="experience-company">GKBI Youth Community — Jakarta</div>
                     </div>
-                    <span className="experience-date">Mag 2024 – Sekarang</span>
+                    <span className="experience-date">May 2024 – Present</span>
                   </div>
                   <p className="experience-detail-desc" style={{ marginTop: '8px' }}>
-                    Menjadwalkan pertemuan bulanan komunitas, menyusun rancangan anggaran belanja (RAB) kegiatan, serta mengoordinasikan logistik untuk berbagai acara pemuda. Mengawasi alokasi sumber daya dan menyusun laporan evaluasi pasca-kegiatan demi memastikan akuntabilitas program.
+                    Scheduled monthly community meetings, drafted activity budget plans, and coordinated logistics for various youth events. Supervised resource allocation and prepared post-event evaluation reports to ensure program accountability.
                   </p>
                 </div>
               </div>
@@ -491,13 +543,13 @@ function App() {
                 <div className="experience-card">
                   <div className="experience-header">
                     <div className="experience-title-area">
-                      <h3>Staff of Public Relation Division</h3>
+                      <h3>Staff of Public Relations Division</h3>
                       <div className="experience-company">Psychology Expo UNJ — Jakarta</div>
                     </div>
-                    <span className="experience-date">Jun 2023 – Des 2023</span>
+                    <span className="experience-date">Jun 2023 – Dec 2023</span>
                   </div>
                   <p className="experience-detail-desc" style={{ marginTop: '8px' }}>
-                    Menjembatani komunikasi acara dengan berbagai mitra media (media partners), sponsor, dan pemangku kepentingan. Mengembangkan materi promosi digital, menjalankan kampanye di media sosial, menanggapi pertanyaan publik, serta menyusun undangan dan rilis pers resmi.
+                    Bridged event communications with media partners, sponsors, and stakeholders. Developed digital promotional materials, ran social media campaigns, handled public inquiries, and drafted official invitations and press releases.
                   </p>
                 </div>
               </div>
@@ -514,7 +566,7 @@ function App() {
                     <span className="experience-date">Sep 2022</span>
                   </div>
                   <p className="experience-detail-desc" style={{ marginTop: '8px' }}>
-                    Mengatur logistik acara pelantikan mahasiswa psikologi, mengelola penataan tempat acara (venue setup), dan menjamin ketersediaan serta kelengkapan seluruh peralatan/perlengkapan. Mengawasi inventarisasi barang, menangani pengadaan (procurement), dan memperlancar aspek operasional selama acara berlangsung.
+                    Arranged logistics for the psychology student inauguration event, managed venue setup, and ensured the availability and completeness of all equipment. Supervised inventory, handled procurement, and streamlined operational aspects during the event.
                   </p>
                 </div>
               </div>
@@ -526,10 +578,10 @@ function App() {
         return (
           <div key="tools">
             <div className="content-title-section">
-              <h2 className="content-title">Keahlian & Alat Kerja</h2>
+              <h2 className="content-title">Skills & Work Tools</h2>
             </div>
             <p className="content-subtitle">
-              Kombinasi <span className="highlight">Alat Teknis</span> dan <span className="highlight">Kemampuan Inti</span> yang saya gunakan untuk menunjang performa kerja HR dan Branding.
+              A combination of <span className="highlight">Technical Tools</span> and <span className="highlight">Core Skills</span> that I use to support HR and branding performance.
             </p>
 
             <div className="skills-container">
@@ -635,14 +687,14 @@ function App() {
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M12 16v-4M12 8h.01"/>
                   </svg>
-                  Pengalaman Lainnya
+                  Other Experience
                 </h3>
                 <div className="achievements-grid">
                   <div className="achievement-card">
                     <span className="achievement-icon">📅</span>
                     <div className="achievement-content">
-                      <h4>Koordinator Jadwal Kuliah & Liaison (2023)</h4>
-                      <p>Bertanggung jawab mengoordinasikan jadwal kuliah kelas, memfasilitasi komunikasi yang lancar antara dosen dan mahasiswa, serta memastikan persiapan ruangan kelas beserta seluruh peralatan penunjang berjalan baik.</p>
+                      <h4>Course Scheduler & Liaison Coordinator (2023)</h4>
+                      <p>Responsible for coordinating class lecture schedules, facilitating smooth communication between lecturers and students, and ensuring classroom readiness along with all supporting equipment runs well.</p>
                     </div>
                   </div>
                 </div>
@@ -655,30 +707,94 @@ function App() {
         return (
           <div key="education">
             <div className="content-title-section">
-              <h2 className="content-title">Pendidikan</h2>
+              <h2 className="content-title">Education</h2>
             </div>
             <p className="content-subtitle">
-              Riwayat akademis saya dari <span className="highlight">Universitas Negeri Jakarta</span> hingga tingkat sekolah menengah.
+              A glimpse into my academic journey, highlighting not just grades, but <span className="highlight">active participations</span> and milestones that shaped my personal growth.
             </p>
 
             <div className="education-grid">
               {/* UNJ */}
               <div className="education-card">
-                <span className="edu-year">2021 – 2025</span>
-                <h3 className="edu-school">Universitas Negeri Jakarta</h3>
-                <p className="edu-degree">Bachelor of Psychology (Sarjana Psikologi)</p>
-                <div className="edu-score">
-                  IPK: <span className="score-badge">3.80 / 4.00</span>
+                <div className="edu-card-content">
+                  <div className="edu-image-wrapper">
+                    <img src="/unj_campus.png?v=3" alt="Universitas Negeri Jakarta" className="edu-card-img" />
+                  </div>
+                  <div className="edu-info-wrapper">
+                    <span className="edu-year">2021 – 2025</span>
+                    <h3 className="edu-school">Universitas Negeri Jakarta</h3>
+                    <p className="edu-degree">Bachelor of Psychology</p>
+                    <div className="edu-score">
+                      GPA: <span className="score-badge">3.80 / 4.00</span>
+                    </div>
+                  </div>
+                </div>
+                <hr className="edu-divider" />
+                <div className="edu-details">
+                  <h4 className="edu-details-title">Key Involvements & Awards:</h4>
+                  <ul className="edu-details-list">
+                    <li>
+                      <span className="edu-bullet">✦</span>
+                      <span className="edu-bullet-text">Class Coordinator for Urban Environmental Psychology (1 Semester)</span>
+                    </li>
+                    <li>
+                      <span className="edu-bullet">✦</span>
+                      <span className="edu-bullet-text">Committee Member for UNJ Psychology Expo & Inauguration</span>
+                    </li>
+                    <li>
+                      <span className="edu-bullet">✦</span>
+                      <span className="edu-bullet-text">Active Participant in Lecturers' Community Service Programs</span>
+                    </li>
+                    <li>
+                      <span className="edu-bullet">✦</span>
+                      <span className="edu-bullet-text">3rd Place Winner: Web Portfolio Design Competition (UI/UX)</span>
+                    </li>
+                    <li>
+                      <span className="edu-bullet">✦</span>
+                      <span className="edu-bullet-text">3rd Place Winner: Faculty-Level Singing Competition</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="edu-certs-footer">
+                  <button className="view-certs-btn" onClick={() => { setActiveCertIndex(0); setShowCertsModal(true); }}>
+                    <span className="btn-icon">📜</span>
+                    <span className="btn-text">View Certifications</span>
+                  </button>
                 </div>
               </div>
 
               {/* SMAN 33 */}
               <div className="education-card">
-                <span className="edu-year">2018 – 2021</span>
-                <h3 className="edu-school">SMAN 33 Jakarta</h3>
-                <p className="edu-degree">Senior High School (MIPA/IPA)</p>
-                <div className="edu-score">
-                  Nilai Rata-rata: <span className="score-badge">88.00 / 100.00</span>
+                <div className="edu-card-content">
+                  <div className="edu-image-wrapper">
+                    <img src="/sman33_school.png?v=3" alt="SMAN 33 Jakarta" className="edu-card-img" />
+                  </div>
+                  <div className="edu-info-wrapper">
+                    <span className="edu-year">2018 – 2021</span>
+                    <h3 className="edu-school">SMAN 33 Jakarta</h3>
+                    <p className="edu-degree">Senior High School (IPS)</p>
+                    <div className="edu-score">
+                      Average Score: <span className="score-badge">88.00 / 100.00</span>
+                    </div>
+                  </div>
+                </div>
+                <hr className="edu-divider" />
+                <div className="edu-details">
+                  <h4 className="edu-details-title">Key Involvements & Awards:</h4>
+                  <ul className="edu-details-list">
+                    <li>
+                      <span className="edu-bullet">✦</span>
+                      <span className="edu-bullet-text">Student Council (OSIS) Member (1 Period)</span>
+                    </li>
+                    <li>
+                      <span className="edu-bullet">✦</span>
+                      <span className="edu-bullet-text">President of Choir Extracurricular (1 Period)</span>
+                    </li>
+                    <li>
+                      <span className="edu-bullet">✦</span>
+                      <span className="edu-bullet-text">Fundraising Committee for Christian Spiritual Retreat</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -692,6 +808,28 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Floating Theme Switch Selector */}
+      <div className="theme-switch-container">
+        <button 
+          className={`theme-switch-toggle ${theme === 'dark' ? 'active' : ''}`} 
+          onClick={toggleTheme}
+          aria-label="Toggle dark mode"
+        >
+          <span className="theme-switch-knob">
+            <svg className="knob-icon sun-icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+            <svg className="knob-icon moon-icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </span>
+        </button>
+      </div>
+
       {/* Mobile Sticky Header */}
       <header className="mobile-header">
         <button className="menu-toggle" onClick={() => setIsMobileMenuOpen(true)}>
@@ -714,8 +852,8 @@ function App() {
       <aside className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-top">
           <div className="profile-section">
-            <img src="/susana.png" alt="Susana Bureni" className="profile-img" />
-            <div className="profile-info">
+            <img src="/susana.png?v=2" alt="Susana Bureni" className="profile-img" />
+            <div className="profile-info" style={{ flexGrow: 1 }}>
               <h1 className="profile-name">{profile.name}</h1>
               <span className="profile-title">{profile.role}</span>
             </div>
@@ -792,6 +930,58 @@ function App() {
           {renderContent()}
         </div>
       </main>
+
+      {/* Certificate Lightbox Modal */}
+      {showCertsModal && (
+        <div className="certs-modal-overlay" onClick={() => setShowCertsModal(false)}>
+          <div className="certs-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="certs-modal-close" onClick={() => setShowCertsModal(false)} aria-label="Close modal">
+              &times;
+            </button>
+            
+            <button 
+              className="certs-nav-btn prev" 
+              onClick={() => setActiveCertIndex((prev) => (prev === 0 ? certificates.length - 1 : prev - 1))}
+              aria-label="Previous certificate"
+            >
+              &#8249;
+            </button>
+            
+            <div className="certs-slide-container">
+              <div className="certs-image-wrapper">
+                <img 
+                  src={certificates[activeCertIndex].image} 
+                  alt={certificates[activeCertIndex].title} 
+                  className="certs-modal-img" 
+                />
+              </div>
+              <div className="certs-modal-caption">
+                <span className="certs-counter">{activeCertIndex + 1} / {certificates.length}</span>
+                <p className="certs-title">{certificates[activeCertIndex].title}</p>
+              </div>
+            </div>
+            
+            <button 
+              className="certs-nav-btn next" 
+              onClick={() => setActiveCertIndex((prev) => (prev === certificates.length - 1 ? 0 : prev + 1))}
+              aria-label="Next certificate"
+            >
+              &#8250;
+            </button>
+
+            <div className="certs-indicator-dots">
+              {certificates.map((_, idx) => (
+                <button
+                  key={idx}
+                  className={`certs-dot ${idx === activeCertIndex ? 'active' : ''}`}
+                  onClick={() => setActiveCertIndex(idx)}
+                  aria-label={`Go to certificate ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
