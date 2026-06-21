@@ -4,9 +4,11 @@
   --bg-primary: #f4f7fc;
   --bg-card: rgba(255, 255, 255, 0.85);
   --bg-sidebar: rgba(240, 244, 255, 0.75);
+  --bg-stat-card: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 244, 255, 0.9) 100%);
   --text-primary: #1e293b;
   --text-secondary: #475569;
   --text-muted: #64748b;
+  --text-stats-title: #000000;
   --accent: #4f70f6;
   --accent-light: rgba(79, 112, 246, 0.08);
   --accent-hover: #3b5bdb;
@@ -35,9 +37,11 @@
   --bg-primary: #0a0d16;
   --bg-card: rgba(22, 28, 45, 0.85);
   --bg-sidebar: rgba(15, 20, 35, 0.8);
+  --bg-stat-card: linear-gradient(135deg, rgba(22, 28, 45, 0.9) 0%, rgba(15, 20, 35, 0.9) 100%);
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-muted: #64748b;
+  --text-stats-title: #ffffff;
   --accent: #5c7cfa;
   --accent-light: rgba(92, 124, 250, 0.12);
   --accent-hover: #4c6ef5;
