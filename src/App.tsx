@@ -7,10 +7,12 @@ type TabType = 'Home' | 'Experience' | 'Social Activity' | 'Tools' | 'Education'
 function App() {
   const [activeTab, setActiveTab] = useState<TabType>('Home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [carouselIndices, setCarouselIndices] = useState<number[]>([0, 0, 0]);
+  const [carouselIndices, setCarouselIndices] = useState<number[]>([0, 0, 0, 0, 0]);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [showCertsModal, setShowCertsModal] = useState(false);
   const [activeCertIndex, setActiveCertIndex] = useState(0);
+  const [lightboxImages, setLightboxImages] = useState<{ src: string; alt: string }[]>([]);
+  const [lightboxActiveIdx, setLightboxActiveIdx] = useState<number>(0);
 
   const certificates = [
     {
@@ -54,10 +56,37 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCarouselIndices((prev) => prev.map((idx) => (idx + 1) % 3));
+      setCarouselIndices((prev) => {
+        const copy = [...prev];
+        if (copy.length >= 5) {
+          copy[0] = (copy[0] + 1) % 3;
+          copy[1] = (copy[1] + 1) % 3;
+          copy[2] = (copy[2] + 1) % 3;
+          copy[3] = (copy[3] + 1) % 3; // GROW Secretary (3 photos)
+          copy[4] = (copy[4] + 1) % 3; // DNA Kids Sunday School Teacher (now 3 photos)
+        }
+        return copy;
+      });
     }, 3500);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (lightboxImages.length === 0) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setLightboxImages([]);
+      } else if (e.key === 'ArrowRight') {
+        setLightboxActiveIdx((prev) => (prev === lightboxImages.length - 1 ? 0 : prev + 1));
+      } else if (e.key === 'ArrowLeft') {
+        setLightboxActiveIdx((prev) => (prev === 0 ? lightboxImages.length - 1 : prev - 1));
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxImages]);
 
   const toggleTheme = () => {
     setTheme((prev) => {
@@ -85,19 +114,32 @@ function App() {
 
   const expImages = [
     [
-      { src: '/kemnaker_intern_1.jpg?v=1', alt: 'MNC Media Kemnaker Intern Team' },
-      { src: '/kemnaker_intern_2.jpg?v=1', alt: 'iNews Media Group Office Team' },
-      { src: '/kemnaker_intern_3.jpg?v=1', alt: 'Kemnaker Intern Meeting Group' }
+      { src: '/kemnaker_intern_1.jpg?v=1', alt: 'Foto tim HR iNews Media Group' },
+      { src: '/kemnaker_intern_2.jpg?v=1', alt: 'Foto HR Intern iNews Media Group' },
+      { src: '/kemnaker_intern_3.jpg?v=1', alt: 'Salah satu dokumentasi kegiatan training saya' }
     ],
     [
-      { src: '/suitmedia_freelance_1.jpg?v=1', alt: 'Suitmedia Freelance Team Outing' },
-      { src: '/suitmedia_freelance_2.jpg?v=1', alt: 'Suitmedia Freelance Dinner & Group' },
-      { src: '/suitmedia_freelance_3.jpg?v=1', alt: 'Suitmedia Office Front Group' }
+      { src: '/suitmedia_freelance_1.jpg?v=1', alt: 'Foto Tim HR Suitmedia Jakarta' },
+      { src: '/suitmedia_freelance_2.jpg?v=1', alt: 'Dokumentasi kegiatan employee engagement dengan Suitmedia Bandung' },
+      { src: '/suitmedia_freelance_3.jpg?v=1', alt: 'Dokumentasi Onboarding Intern Suitmedia Jakarta Program MSIB Batch 7' }
     ],
     [
-      { src: '/suitmedia_intern_1.jpg?v=1', alt: 'Suitmedia MSIB Intern Team' },
-      { src: '/suitmedia_intern_2.jpg?v=1', alt: 'Suitmedia Birthday Celebration' },
-      { src: '/suitmedia_intern_3.jpg?v=1', alt: 'Suitmedia HR MSIB Group' }
+      { src: '/suitmedia_intern_1.jpg?v=1', alt: 'Dokumentasi kegiatan employee engagement yaitu offboarding intern Suitmedia program MSIB Batch 6' },
+      { src: '/suitmedia_intern_2.jpg?v=1', alt: 'Foto salah satu kegiatan employee engagement di Jakarta' },
+      { src: '/suitmedia_intern_3.jpg?v=1', alt: 'Foto kegiatan Halal Bi Halal Suitmedia Jakarta' }
+    ]
+  ];
+
+  const socialImages = [
+    [
+      { src: '/grow_secretary_1.jpg?v=1', alt: 'GROW Youth Community Outing' },
+      { src: '/grow_secretary_2.jpg?v=1', alt: 'GROW Christmas Dancer Team' },
+      { src: '/grow_secretary_3.jpg?v=1', alt: 'GROW Youth Service Group' }
+    ],
+    [
+      { src: '/sunday_school_1.jpg?v=1', alt: 'DNA Kids Sunday School Christmas Event' },
+      { src: '/sunday_school_2.jpg?v=1', alt: 'DNA Kids Sunday School Activity' },
+      { src: '/sunday_school_3.jpg?v=1', alt: 'DNA Kids Sunday School Teacher & Kids Christmas Celebration Group Photo' }
     ]
   ];
 
@@ -252,7 +294,11 @@ function App() {
                               key={imgIdx} 
                               className={cardClass}
                               onClick={() => {
-                                if (offset === 1) handleNext(0);
+                                if (offset === 0) {
+                                  setLightboxImages(expImages[0]);
+                                  setLightboxActiveIdx(imgIdx);
+                                }
+                                else if (offset === 1) handleNext(0);
                                 else if (offset === 2) handlePrev(0);
                               }}
                             >
@@ -339,7 +385,11 @@ function App() {
                               key={imgIdx} 
                               className={cardClass}
                               onClick={() => {
-                                if (offset === 1) handleNext(1);
+                                if (offset === 0) {
+                                  setLightboxImages(expImages[1]);
+                                  setLightboxActiveIdx(imgIdx);
+                                }
+                                else if (offset === 1) handleNext(1);
                                 else if (offset === 2) handlePrev(1);
                               }}
                             >
@@ -433,7 +483,11 @@ function App() {
                               key={imgIdx} 
                               className={cardClass}
                               onClick={() => {
-                                if (offset === 1) handleNext(2);
+                                if (offset === 0) {
+                                  setLightboxImages(expImages[2]);
+                                  setLightboxActiveIdx(imgIdx);
+                                }
+                                else if (offset === 1) handleNext(2);
                                 else if (offset === 2) handlePrev(2);
                               }}
                             >
@@ -513,61 +567,168 @@ function App() {
         return (
           <div key="social-activity">
             <div className="content-title-section">
-              <h2 className="content-title">Organizational Activities</h2>
+              <h2 className="content-title">Social Activity</h2>
             </div>
             <p className="content-subtitle">
-              A showcase of my <span className="highlight">community involvement</span>, featuring the <span className="highlight">creative assets</span> and <span className="highlight">visual designs</span> I produced for each event.
+              Beyond the office, I love <span className="highlight">giving back to my local community</span>. Serving in these roles lets me <span className="highlight">channel my creative energy</span> into something truly meaningful. Take a peek at some of the <span className="highlight">visual stories</span> I’ve helped create!
             </p>
 
             <div className="timeline">
-              {/* GKBI */}
+              {/* GROW Secretary */}
               <div className="timeline-item">
                 <div className="timeline-dot"></div>
                 <div className="experience-card">
-                  <div className="experience-header">
-                    <div className="experience-title-area">
-                      <h3>Secretary</h3>
-                      <div className="experience-company">GKBI Youth Community — Jakarta</div>
+                  <div className="experience-card-content">
+                    {/* Left Column: 3D Image Stack Carousel */}
+                    <div className="exp-carousel-wrapper">
+                      <div className="exp-carousel-container">
+                        {socialImages[0].map((img, imgIdx) => {
+                          const activeIdx = carouselIndices[3];
+                          const offset = (imgIdx - activeIdx + 3) % 3;
+                          let cardClass = "carousel-card";
+                          if (offset === 0) cardClass += " active";
+                          else if (offset === 1) cardClass += " right";
+                          else if (offset === 2) cardClass += " left";
+
+                          return (
+                            <div 
+                              key={imgIdx} 
+                              className={cardClass}
+                              onClick={() => {
+                                if (offset === 0) {
+                                  setLightboxImages(socialImages[0]);
+                                  setLightboxActiveIdx(imgIdx);
+                                }
+                                else if (offset === 1) handleNext(3);
+                                else if (offset === 2) handlePrev(3);
+                              }}
+                            >
+                              <img src={img.src} alt={img.alt} className="carousel-card-img" />
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="exp-carousel-controls">
+                        <div className="carousel-dots">
+                          {[0, 1, 2].map((dot) => (
+                            <span 
+                              key={dot} 
+                              className={`carousel-dot ${carouselIndices[3] === dot ? 'active' : ''}`}
+                              onClick={() => {
+                                setCarouselIndices(prev => {
+                                  const copy = [...prev];
+                                  copy[3] = dot;
+                                  return copy;
+                                });
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                    <span className="experience-date">May 2024 – Present</span>
+
+                    {/* Right Column: Text Information */}
+                    <div className="experience-card-info">
+                      <div className="experience-header">
+                        <div className="experience-title-area">
+                          <h3>Secretary</h3>
+                          <div className="experience-company">GROW (Gereja Kristus Bojong Indah Youth Community) — Jakarta</div>
+                        </div>
+                        <span className="experience-date">2024 – Present</span>
+                      </div>
+                      <ul className="experience-details social-activity-details" style={{ marginTop: '12px' }}>
+                        <li className="experience-detail-item">
+                          <p className="experience-detail-desc">
+                            Breathed life into our community updates by designing weekly flyers and vibrant visual assets, keeping our members warmly connected and well-informed.
+                          </p>
+                        </li>
+                        <li className="experience-detail-item">
+                          <p className="experience-detail-desc">
+                            Collaborated closely with the core committee to brainstorm, shape, and bring our annual youth programs to life—always ensuring our budget was managed with care and precision.
+                          </p>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                  <p className="experience-detail-desc" style={{ marginTop: '8px' }}>
-                    Scheduled monthly community meetings, drafted activity budget plans, and coordinated logistics for various youth events. Supervised resource allocation and prepared post-event evaluation reports to ensure program accountability.
-                  </p>
                 </div>
               </div>
 
-              {/* Psychology Expo */}
+              {/* Sunday School Teacher */}
               <div className="timeline-item">
                 <div className="timeline-dot"></div>
                 <div className="experience-card">
-                  <div className="experience-header">
-                    <div className="experience-title-area">
-                      <h3>Staff of Public Relations Division</h3>
-                      <div className="experience-company">Psychology Expo UNJ — Jakarta</div>
-                    </div>
-                    <span className="experience-date">Jun 2023 – Dec 2023</span>
-                  </div>
-                  <p className="experience-detail-desc" style={{ marginTop: '8px' }}>
-                    Bridged event communications with media partners, sponsors, and stakeholders. Developed digital promotional materials, ran social media campaigns, handled public inquiries, and drafted official invitations and press releases.
-                  </p>
-                </div>
-              </div>
+                  <div className="experience-card-content">
+                    {/* Left Column: 3D Image Stack Carousel */}
+                    <div className="exp-carousel-wrapper">
+                      <div className="exp-carousel-container">
+                        {socialImages[1].map((img, imgIdx) => {
+                          const activeIdx = carouselIndices[4];
+                          const offset = (imgIdx - activeIdx + 3) % 3;
+                          let cardClass = "carousel-card";
+                          if (offset === 0) cardClass += " active";
+                          else if (offset === 1) cardClass += " right";
+                          else if (offset === 2) cardClass += " left";
 
-              {/* Inauguration Committee */}
-              <div className="timeline-item">
-                <div className="timeline-dot"></div>
-                <div className="experience-card">
-                  <div className="experience-header">
-                    <div className="experience-title-area">
-                      <h3>Staff of Logistics Department</h3>
-                      <div className="experience-company">Psychology Inauguration Organizing Committee — Jakarta</div>
+                          return (
+                            <div 
+                              key={imgIdx} 
+                              className={cardClass}
+                              onClick={() => {
+                                if (offset === 0) {
+                                  setLightboxImages(socialImages[1]);
+                                  setLightboxActiveIdx(imgIdx);
+                                }
+                                else if (offset === 1) handleNext(4);
+                                else if (offset === 2) handlePrev(4);
+                              }}
+                            >
+                              <img src={img.src} alt={img.alt} className="carousel-card-img" />
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="exp-carousel-controls">
+                        <div className="carousel-dots">
+                          {[0, 1, 2].map((dot) => (
+                            <span 
+                              key={dot} 
+                              className={`carousel-dot ${carouselIndices[4] === dot ? 'active' : ''}`}
+                              onClick={() => {
+                                setCarouselIndices(prev => {
+                                  const copy = [...prev];
+                                  copy[4] = dot;
+                                  return copy;
+                                });
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                    <span className="experience-date">Sep 2022</span>
+
+                    {/* Right Column: Text Information */}
+                    <div className="experience-card-info">
+                      <div className="experience-header">
+                        <div className="experience-title-area">
+                          <h3>Sunday School Teacher</h3>
+                          <div className="experience-company">DNA Kids (Gereja Bethel Indonesia Puri Indah) — Jakarta</div>
+                        </div>
+                        <span className="experience-date">2021 – 2023</span>
+                      </div>
+                      <ul className="experience-details social-activity-details" style={{ marginTop: '12px' }}>
+                        <li className="experience-detail-item">
+                          <p className="experience-detail-desc">
+                            Teamed up with fellow educators during monthly creative sessions to dream up and construct playful, engaging learning materials that spark kids' curiosity.
+                          </p>
+                        </li>
+                        <li className="experience-detail-item">
+                          <p className="experience-detail-desc">
+                            Stepped in front of the camera as a host and storyteller for our online Sunday School broadcasts, while also weaving behind-the-scenes magic to produce fresh, engaging social media content.
+                          </p>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                  <p className="experience-detail-desc" style={{ marginTop: '8px' }}>
-                    Arranged logistics for the psychology student inauguration event, managed venue setup, and ensured the availability and completeness of all equipment. Supervised inventory, handled procurement, and streamlined operational aspects during the event.
-                  </p>
                 </div>
               </div>
             </div>
@@ -978,6 +1139,52 @@ function App() {
                   aria-label={`Go to certificate ${idx + 1}`}
                 />
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reusable Image Zoom/Lightbox Modal */}
+      {lightboxImages.length > 0 && (
+        <div className="lightbox-modal-overlay" onClick={() => setLightboxImages([])}>
+          <div className="lightbox-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="lightbox-modal-close" onClick={() => setLightboxImages([])} aria-label="Close image">
+              &times;
+            </button>
+            
+            {lightboxImages.length > 1 && (
+              <button 
+                className="lightbox-nav-btn prev" 
+                onClick={() => setLightboxActiveIdx((prev) => (prev === 0 ? lightboxImages.length - 1 : prev - 1))}
+                aria-label="Previous image"
+              >
+                &#8249;
+              </button>
+            )}
+            
+            <div className="lightbox-modal-image-wrapper">
+              <img 
+                src={lightboxImages[lightboxActiveIdx].src} 
+                alt={lightboxImages[lightboxActiveIdx].alt} 
+                className="lightbox-modal-img" 
+              />
+            </div>
+            
+            {lightboxImages.length > 1 && (
+              <button 
+                className="lightbox-nav-btn next" 
+                onClick={() => setLightboxActiveIdx((prev) => (prev === lightboxImages.length - 1 ? 0 : prev + 1))}
+                aria-label="Next image"
+              >
+                &#8250;
+              </button>
+            )}
+            
+            <div className="lightbox-modal-footer">
+              <span className="lightbox-counter">{lightboxActiveIdx + 1} / {lightboxImages.length}</span>
+              {lightboxImages[lightboxActiveIdx].alt && (
+                <p className="lightbox-modal-caption">{lightboxImages[lightboxActiveIdx].alt}</p>
+              )}
             </div>
           </div>
         </div>
