@@ -114,19 +114,19 @@ function App() {
 
   const expImages = [
     [
-      { src: '/kemnaker_intern_1.jpg?v=1', alt: 'Foto tim HR iNews Media Group' },
-      { src: '/kemnaker_intern_2.jpg?v=1', alt: 'Foto HR Intern iNews Media Group' },
-      { src: '/kemnaker_intern_3.jpg?v=1', alt: 'Salah satu dokumentasi kegiatan training saya' }
+      { src: '/kemnaker_intern_1.jpg?v=1', alt: 'HR Interns squad' },
+      { src: '/kemnaker_intern_2.jpg?v=1', alt: 'Our dynamic HR Team' },
+      { src: '/kemnaker_intern_3.jpg?v=1', alt: 'Hosting & facilitating training sessions' }
     ],
     [
-      { src: '/suitmedia_freelance_1.jpg?v=1', alt: 'Foto Tim HR Suitmedia Jakarta' },
-      { src: '/suitmedia_freelance_2.jpg?v=1', alt: 'Dokumentasi kegiatan employee engagement dengan Suitmedia Bandung' },
-      { src: '/suitmedia_freelance_3.jpg?v=1', alt: 'Dokumentasi Onboarding Intern Suitmedia Jakarta Program MSIB Batch 7' }
+      { src: '/suitmedia_freelance_1.jpg?v=1', alt: 'The HR Jakarta Team' },
+      { src: '/suitmedia_freelance_2.jpg?v=1', alt: 'Team Bonding Session' },
+      { src: '/suitmedia_freelance_3.jpg?v=1', alt: 'Onboarding MSIB Batch 7' }
     ],
     [
-      { src: '/suitmedia_intern_1.jpg?v=1', alt: 'Dokumentasi kegiatan employee engagement yaitu offboarding intern Suitmedia program MSIB Batch 6' },
-      { src: '/suitmedia_intern_2.jpg?v=1', alt: 'Foto salah satu kegiatan employee engagement di Jakarta' },
-      { src: '/suitmedia_intern_3.jpg?v=1', alt: 'Foto kegiatan Halal Bi Halal Suitmedia Jakarta' }
+      { src: '/suitmedia_intern_1.jpg?v=1', alt: 'MSIB Batch 6 Offboarding' },
+      { src: '/suitmedia_intern_2.jpg?v=1', alt: 'Team Bonding Session' },
+      { src: '/suitmedia_intern_3.jpg?v=1', alt: 'Halal Bi Halal Gathering' }
     ]
   ];
 
